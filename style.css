@@ -1,0 +1,38 @@
+body {
+	height: 100%;
+	width: 100%;
+	background-image: url("images/blur_image.jpg");
+	background-size: cover;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+h1 {
+	font-size: 90px;
+	color: rgb(92, 0, 0);
+}
+.upload {
+	background-color: aliceblue;
+	width: 500px;
+	height: 700px;
+	border-radius: 30px;
+	box-shadow: rgba(0, 0, 0, 0.15) 0px 15px 25px, rgba(0, 0, 0, 0.05) 0px 5px 10px;
+}
+h2 {
+	color: rgb(92, 0, 0);
+}
+form {
+	font-size: 48px;
+}
+button {
+	background-color: lightblue;
+	width: 300px;
+	height: 35px;
+	border-radius: 30px;
+}
+input {
+	font-size: 16px;
+	border-radius: 30px;
+	background-color: aliceblue;
+}
