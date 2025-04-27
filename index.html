@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Face Blur</title>
-</head>
-<body>
-    <h1>Upload Media</h1>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Face Blur</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<h1>Upload Media</h1>
+		<div class="upload">
+			<h2>Image Upload</h2>
+			<form action="/uploadimage/" method="post" enctype="multipart/form-data">
+				<input type="file" name="file" accept="image/*" required />
+				<button type="submit">Blur Image</button>
+			</form>
 
-    <h2>Image Upload</h2>
-    <form action="/uploadimage/" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept="image/*" required>
-        <button type="submit">Blur Image</button>
-    </form>
-
-    <h2>Video Upload</h2>
-    <form action="/uploadvideo/" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept="video/*" required>
-        <button type="submit">Blur Video</button>
-    </form>
-</body>
+			<h2>Video Upload</h2>
+			<form action="/uploadvideo/" method="post" enctype="multipart/form-data">
+				<input type="file" name="file" accept="video/*" required />
+				<button type="submit">Blur Video</button>
+			</form>
+		</div>
+	</body>
 </html>
