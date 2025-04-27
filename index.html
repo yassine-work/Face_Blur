@@ -2,26 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Image or Video</title>
+    <title>Face Blur</title>
 </head>
 <body>
-    <h1>Upload Image or Video for Processing</h1>
+    <h1>Upload Media</h1>
 
-
-    <h2>Upload Image</h2>
-    <form action="http://localhost:8000/uploadimage/" method="post" enctype="multipart/form-data">
+    <h2>Image Upload</h2>
+    <form action="/uploadimage/" method="post" enctype="multipart/form-data">
         <input type="file" name="file" accept="image/*" required>
-        <button type="submit">Upload Image</button>
+        <button type="submit">Blur Image</button>
     </form>
 
-    <br><br>
-
-
-    <h2>Upload Video</h2>
-    <form action="http://localhost:8000/uploadvideo/" method="post" enctype="multipart/form-data">
+    <h2>Video Upload</h2>
+    <form action="/uploadvideo/" method="post" enctype="multipart/form-data">
         <input type="file" name="file" accept="video/*" required>
-        <button type="submit">Upload Video</button>
+        <button type="submit">Blur Video</button>
     </form>
 </body>
 </html>

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks, HTTPException, Response
 from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 import tempfile
 import os
 import io
@@ -9,13 +10,20 @@ from main import FaceMeshDetector, blur_face_shape
 
 app = FastAPI()
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins (adjust for production)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def remove_file(file_path: str):
     try:
         os.unlink(file_path)
     except Exception as e:
         print(f"Error removing file {file_path}: {e}")
-
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_html():
@@ -26,11 +34,13 @@ async def serve_html():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Could not load HTML: {str(e)}")
 
+@app.get("/healthz")
+async def health_check():
+    return {"status": "healthy"}
 
 @app.post("/uploadimage/")
 async def upload_image(file: UploadFile = File(...)):
     try:
-        # Read and process image
         img_data = await file.read()
         img = cv2.imdecode(np.frombuffer(img_data, np.uint8), cv2.IMREAD_COLOR)
         if img is None:
@@ -47,10 +57,8 @@ async def upload_image(file: UploadFile = File(...)):
             media_type="image/jpeg",
             headers={"Content-Disposition": "inline; filename=processed.jpg"}
         )
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Image processing failed: {str(e)}")
-
 
 @app.post("/uploadvideo/")
 async def upload_video(file: UploadFile = File(...), background_tasks: BackgroundTasks = BackgroundTasks()):
@@ -62,7 +70,6 @@ async def upload_video(file: UploadFile = File(...), background_tasks: Backgroun
             temp_file.write(video_data)
 
         processed_video_path = process_video(temp_path)
-
         background_tasks.add_task(remove_file, temp_path)
 
         response = FileResponse(
@@ -73,15 +80,12 @@ async def upload_video(file: UploadFile = File(...), background_tasks: Backgroun
         background_tasks.add_task(remove_file, processed_video_path)
 
         return response
-
     except Exception as e:
         if 'temp_path' in locals() and os.path.exists(temp_path):
             background_tasks.add_task(remove_file, temp_path)
         if 'processed_video_path' in locals() and os.path.exists(processed_video_path):
             background_tasks.add_task(remove_file, processed_video_path)
-
         raise HTTPException(status_code=500, detail=f"Video processing failed: {str(e)}")
-
 
 def process_image(img):
     try:
@@ -95,7 +99,6 @@ def process_image(img):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Image processing error: {str(e)}")
 
-
 def process_video(input_path: str) -> str:
     try:
         cap = cv2.VideoCapture(input_path)
@@ -106,7 +109,8 @@ def process_video(input_path: str) -> str:
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         fps = cap.get(cv2.CAP_PROP_FPS)
 
-        output_path = "processed_video.mp4"
+        # Use temp directory for output
+        output_path = os.path.join(tempfile.gettempdir(), "processed_video.mp4")
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         out = cv2.VideoWriter(output_path, fourcc, fps if fps > 0 else 20.0, (width, height))
 
@@ -127,7 +131,6 @@ def process_video(input_path: str) -> str:
         out.release()
 
         return output_path
-
     except Exception as e:
         if 'out' in locals():
             out.release()
